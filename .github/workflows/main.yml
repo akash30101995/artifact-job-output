@@ -1,62 +1,44 @@
-name: Deploy
+name: Deploy website
 on:
   push:
     branches:
-      - main
-      
+     - main
+     
 jobs:
-  Test:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         
-      - name: install dependencies
+      - name: Install dependencies
         run: npm ci
         
-      - name: testing code
+      - name: testing the code
         run: npm run test
-  Build:
-    needs: Test
+        
+  build:
+    needs: test
     runs-on: ubuntu-latest
-    outputs:
-      script-file: ${{ steps.publish.outputs.script-file }}
     steps:
-      - uses: actions/checkout@v3
-      - name: caching
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: deps-node-modules-${{ hashfiles("**/package-lock.json") }}
-      - name: install dependencies
+      - uses: actions/checkout@v2
+      
+      - name: Install dependencies
         run: npm ci
         
-      - name: building code
+      - name: build the code
         run: npm run build
         
-      - name: Pulish JS names
-        id: publish
-        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
-   
-      - name: upload artifacts
-        uses: actions/upload-artifact@v3
-        with: 
-          name: dist-files
-          path: dist
-            #dist
-            #package.json
-        
-        
   deploy:
-    needs: Build
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Get Build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: dist-files
-      - name: output content
-        run: ls
-      - name: output filename
-        run: echo "${{ needs.build.outputs }}"
-      - name: deploy
-        run: echo "deploying"
+      - uses: actions/checkout@v2
+        
+      - name: deploythe code
+        run: echo "deploying the code"
+        
+        
+      
+        
+        
+         
