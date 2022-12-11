@@ -1,40 +1,62 @@
-name: Deploy website
+name: Deploy
 on:
   push:
     branches:
-      - main
-
+      - master
+      
 jobs:
-  test:
-    runs-on: ubutnu-latest
+  Test:
+    runs-on: ubuntu-latest
     steps:
-
-      - name: checkout to repository
       - uses: actions/checkout@v3
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Test the code
-        run: npm test
-
-  build:
-    runs-on: ubutnu-latest
-    steps:
-      - name: checkout to repository
-      - uses: actions/checkout@v3
-
+        
       - name: install dependencies
         run: npm ci
-
-      - name: build
-        run: npm run build
-
-  deploy:
-    runs-on: ubutnu-latest
+        
+      - name: testing code
+        run: npm run test
+  Build:
+    needs: Test
+    runs-on: ubuntu-latest
+    outputs:
+      script-file: ${{ steps.publish.outputs.script-file }}
     steps:
-      - name: build the code
+      - uses: actions/checkout@v3
+      - name: caching
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashfiles("**/package-lock.json") }}
+      - name: install dependencies
+        run: npm ci
+        
+      - name: building code
         run: npm run build
-
-      - name: deploy the code
-        run: echo "deploying the code"
+        
+      - name: Pulish JS names
+        id: publish
+        run: find dist/assets/*.js -type f -execdir echo 'script-file={}' >> $GITHUB_OUTPUT ';'
+   
+      - name: upload artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: dist-files
+          path: dist
+            #dist
+            #package.json
+        
+        
+  deploy:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+      - name: output content
+        run: ls
+      - name: output filename
+        run: echo "${{ needs.build.outputs }}"
+      - name: deploy
+        run: echo "deploying"
