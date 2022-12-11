@@ -8,8 +8,6 @@ jobs:
   test:
     runs-on: ubutnu-latest
     steps:
-      - name: get all the output of data
-        run: echo "${{ toJSON(github) }}"
 
       - name: checkout to repository
       - uses: actions/checkout@v3
