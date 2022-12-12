@@ -28,6 +28,14 @@ jobs:
         
       - name: build the code
         run: npm run build
+      
+      - name: upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: |
+            dist
+            package.j
         
   deploy:
     needs: test
