@@ -38,10 +38,15 @@ jobs:
             package.j
         
   deploy:
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Get build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+      - name: output the content
+        run: ls
         
       - name: deploythe code
         run: echo "deploying the code"
