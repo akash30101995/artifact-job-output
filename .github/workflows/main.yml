@@ -9,9 +9,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: cjecking to repo  
+        uses: actions/checkout@v2
       - name: Cache dependencies
-      - uses: actions/cache@v3
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: deps-node-modules-${{ hashfiles('**/package-lock.json') }}
@@ -28,9 +29,10 @@ jobs:
     outputs: 
       scirpt-file: ${{ steps.publish.outputs.script-file }}
     steps:
-      - uses: actions/checkout@v2
+      - name: cjecking to repo  
+        uses: actions/checkout@v2
       - name: Cache dependencies
-      - uses: actions/cache@v3
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: deps-node-modules-${{ hashfiles('**/package-lock.json') }}
